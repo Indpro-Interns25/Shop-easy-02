@@ -27,13 +27,12 @@ const Register = () => {
 
   // Reset some fields when userType changes
   useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      referralCode: "",
-      city: "",
-      phone: "",
-    }));
-  }, [userType]);
+  setFormData((prev) => ({
+    ...prev,
+    referralCode: "", // only reset referralCode
+  }));
+}, [userType]);
+
 
   const handleInputChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -41,7 +40,6 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     // Basic validation
     if (formData.password !== formData.confirmPassword) {
       setMessage("❌ Passwords do not match!");
@@ -54,6 +52,7 @@ const Register = () => {
     }
 
     try {
+      
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: {
@@ -69,8 +68,11 @@ const Register = () => {
           referralCode: formData.referralCode,
         }),
       });
+      
+      console.log(response.body);
 
       const data = await response.json();
+      console.log("test: ", data);
       console.log("Response from backend:", data);
 
       if (response.ok) {
@@ -188,6 +190,7 @@ const Register = () => {
               placeholder="+91 9876543210"
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-300"
             />
+            {/* {console.log(formData.phone)} */}
           </div>
 
           {/* Referral Code (Only for City Admin) */}
