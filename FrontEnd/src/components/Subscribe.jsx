@@ -1,8 +1,33 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 const Subscribe = () => {
+  const sectionRef = useRef();
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    gsap.fromTo(
+      sectionRef.current,
+      { opacity: 0, scale: 0.85 },
+      {
+        opacity: 1,
+        scale: 1,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          toggleActions: "play reverse play reverse",
+        },
+      }
+    );
+  }, []);
+
   return (
-    <section className="bg-pink-50 py-16 text-center">
+    <section ref={sectionRef} className="bg-pink-50 py-16 text-center">
       <h3 className="text-3xl font-bold mb-4">Subscribe To Get Discount Offers</h3>
       <p className="text-gray-600 mb-6">
         Join our newsletter and never miss out on exclusive offers.

@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 const features = [
   { title: "Fast Delivery", desc: "Quick and reliable shipping worldwide." },
@@ -7,8 +10,30 @@ const features = [
 ];
 
 const WhyShop = () => {
+  const sectionRef = useRef();
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    gsap.fromTo(
+      sectionRef.current,
+      { opacity: 0, y: 60 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          toggleActions: "play reverse play reverse",
+        },
+      }
+    );
+  }, []);
+
   return (
-    <section className="py-16 text-center bg-gray-50">
+    <section ref={sectionRef} className="py-16 text-center bg-gray-50">
       <h2 className="text-3xl font-bold mb-10">Why Shop With Us</h2>
       <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 px-6">
         {features.map((item, i) => (
