@@ -85,15 +85,14 @@ const Register = () => {
       setMessage("❌ Error connecting to backend");
     }
   };
-
-  return (
+return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center mb-6">
-          Register as {userTypes.find((u) => u.value === userType)?.label}
-        </h2>
+        <h2 className="text-3xl font-bold text-center mb-6">Register as {userTypes.find(u => u.value === userType)?.label}</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Remove role selector, role fixed from URL */}
+
           {/* Username */}
           <div>
             <label htmlFor="username" className="block font-medium mb-1">
@@ -190,10 +189,9 @@ const Register = () => {
               placeholder="+91 9876543210"
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-300"
             />
-            {/* {console.log(formData.phone)} */}
           </div>
 
-          {/* Referral Code (Only for City Admin) */}
+          {/* Referral Code only for city_admin */}
           {userType === "city_admin" && (
             <div>
               <label htmlFor="referralCode" className="block font-medium mb-1">
@@ -219,12 +217,6 @@ const Register = () => {
           </button>
         </form>
 
-        {message && (
-          <p className="mt-4 text-center text-gray-700 font-medium">
-            {message}
-          </p>
-        )}
-
         <p className="mt-5 text-center text-gray-600">
           Already have an account?{" "}
           <a href="/login" className="text-indigo-600 hover:underline">
@@ -237,3 +229,4 @@ const Register = () => {
 };
 
 export default Register;
+ 

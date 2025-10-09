@@ -65,13 +65,6 @@ const Login = () => {
             Login
           </button>
         </form>
-
-        {message && (
-          <p className="mt-4 text-center text-gray-700 font-medium">
-            {message}
-          </p>
-        )}
-
         <p className="mt-5 text-center text-gray-600">
           Don't have an account?{" "}
           <a href="/register" className="text-indigo-600 hover:underline">
