@@ -6,11 +6,13 @@ import gsap from "gsap";
 const Navbar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isProductsOpen, setIsProductsOpen] = useState(false); // Desktop dropdown
+  const [isProductsMobileOpen, setIsProductsMobileOpen] = useState(false); // Mobile expand
 
   const mobileMenuRef = useRef(null);
   const searchRef = useRef(null);
+  const productsDropdownRef = useRef(null);
 
-  // Animate mobile menu open/close
   useEffect(() => {
     if (isMobileOpen && mobileMenuRef.current) {
       gsap.fromTo(
@@ -28,7 +30,6 @@ const Navbar = () => {
     }
   }, [isMobileOpen]);
 
-  // Animate search bar open/close
   useEffect(() => {
     if (isSearchOpen && searchRef.current) {
       gsap.fromTo(
@@ -46,10 +47,26 @@ const Navbar = () => {
     }
   }, [isSearchOpen]);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!isProductsOpen) return;
+
+    function handleClickOutside(event) {
+      if (
+        productsDropdownRef.current &&
+        !productsDropdownRef.current.contains(event.target)
+      ) {
+        setIsProductsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isProductsOpen]);
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
-        {/* Logo and Mobile Menu Button */}
+        {/* Left: Logo and menu */}
         <div className="flex items-center space-x-4">
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
@@ -57,60 +74,84 @@ const Navbar = () => {
           >
             {isMobileOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
-          <Link to="/" className="text-2xl font-bold text-pink-600">
-            Famms
-          </Link>
+          <div className="flex flex-col items-start">
+            <Link to="/" className="text-2xl font-bold text-pink-600">
+              MARÁH
+            </Link>
+            <p className="text-xs text-gray-500 ml-[2px] tracking-wide">
+              Inspired by nature
+            </p>
+          </div>
         </div>
-
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex space-x-8 text-gray-700 font-medium">
-          <li>
-            <Link to="/" className="hover:text-pink-600">
-              Home
+        {/* Right: Navigation links + icons */}
+        <div className="flex items-center space-x-8">
+          <ul className="hidden md:flex space-x-8 text-gray-700 font-medium">
+            <li>
+              <Link to="/" className="hover:text-pink-600">
+                Home
+              </Link>
+            </li>
+            {/* Products dropdown on click */}
+            <li className="relative" ref={productsDropdownRef}>
+              <button
+                className={`hover:text-pink-600 flex items-center focus:outline-none`}
+                onClick={() => setIsProductsOpen((open) => !open)}
+              >
+                Products
+              </button>
+              {isProductsOpen && (
+                <div className="absolute left-0 mt-2 w-40 bg-white shadow-lg rounded z-50">
+                  <Link
+                    to="/products/men"
+                    className="block px-4 py-2 hover:bg-pink-50 text-gray-700"
+                    onClick={() => setIsProductsOpen(false)}
+                  >
+                    Men
+                  </Link>
+                  <Link
+                    to="/products/women"
+                    className="block px-4 py-2 hover:bg-pink-50 text-gray-700"
+                    onClick={() => setIsProductsOpen(false)}
+                  >
+                    Women
+                  </Link>
+                </div>
+              )}
+            </li>
+            <li>
+              <a href="#testimonial" className="hover:text-pink-600">
+                Testimonials
+              </a>
+            </li>
+            <li>
+              <Link to="/login" className="hover:text-pink-600">
+                Login
+              </Link>
+            </li>
+            <li>
+              <Link to="/register" className="hover:text-pink-600">
+                Register
+              </Link>
+            </li>
+          </ul>
+          {/* Icons */}
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="text-gray-700 hover:text-pink-600 p-2 focus:outline-none"
+            >
+              <FiSearch size={22} />
+            </button>
+            <Link
+              to="/cart"
+              className="relative text-gray-700 hover:text-pink-600 p-2"
+            >
+              <FiShoppingCart size={22} />
+              <span className="absolute -top-1 -right-1 bg-pink-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                3
+              </span>
             </Link>
-          </li>
-          <li>
-            <a href="#products" className="hover:text-pink-600">
-              Products
-            </a>
-          </li>
-          <li>
-            <a href="#testimonial" className="hover:text-pink-600">
-              Testimonials
-            </a>
-          </li>
-          <li>
-            <Link to="/login" className="hover:text-pink-600">
-              Login
-            </Link>
-          </li>
-          <li>
-            <Link to="/register" className="hover:text-pink-600">
-              Register
-            </Link>
-          </li>
-        </ul>
-
-        {/* Icons Section */}
-        <div className="flex items-center space-x-4">
-          {/* Search Icon */}
-          <button
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
-            className="text-gray-700 hover:text-pink-600 p-2 focus:outline-none"
-          >
-            <FiSearch size={22} />
-          </button>
-
-          {/* Cart Icon */}
-          <Link
-            to="/cart"
-            className="relative text-gray-700 hover:text-pink-600 p-2"
-          >
-            <FiShoppingCart size={22} />
-            <span className="absolute -top-1 -right-1 bg-pink-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              3
-            </span>
-          </Link>
+          </div>
         </div>
       </div>
 
@@ -152,10 +193,43 @@ const Navbar = () => {
               Home
             </Link>
           </li>
+          {/* Products expandable submenu */}
           <li>
-            <a href="#products" onClick={() => setIsMobileOpen(false)}>
+            <button
+              onClick={() => setIsProductsMobileOpen(!isProductsMobileOpen)}
+              className="flex items-center justify-between w-full text-left focus:outline-none"
+            >
               Products
-            </a>
+              <span>
+                {isProductsMobileOpen ? <FiX size={18} /> : <FiMenu size={18} />}
+              </span>
+            </button>
+            {isProductsMobileOpen && (
+              <ul className="ml-4 mt-2 space-y-1">
+                <li>
+                  <Link
+                    to="/products/men"
+                    onClick={() => {
+                      setIsMobileOpen(false);
+                      setIsProductsMobileOpen(false);
+                    }}
+                  >
+                    Men
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/products/women"
+                    onClick={() => {
+                      setIsMobileOpen(false);
+                      setIsProductsMobileOpen(false);
+                    }}
+                  >
+                    Women
+                  </Link>
+                </li>
+              </ul>
+            )}
           </li>
           <li>
             <a href="#testimonial" onClick={() => setIsMobileOpen(false)}>

@@ -1,27 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
+// import video from "src/assets/video.mp4"; // Correct relative import based on your structure
+
+// If your file is src/assets/video.mp4, use this import
+import video from "../assets/video.mp4"; // adjust the path if Hero.jsx is inside src/components or src/pages
 
 const slides = [
   {
-    image:
-      "https://images.unsplash.com/photo-1521334884684-d80222895322?auto=format&fit=crop&w=1920&q=80",
     title: "Sale 20% Off On Everything",
-    description:
-      "Discover the latest trends in fashion and enjoy exclusive discounts on our premium products. Limited time only!",
+    description: "Discover the latest trends in fashion and enjoy exclusive discounts on our premium products. Limited time only!",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=1920&q=80",
     title: "Mega Sale 30% Off Storewide",
-    description:
-      "Upgrade your wardrobe with trendy styles and unbeatable offers. Shop your favorite looks today!",
+    description: "Upgrade your wardrobe with trendy styles and unbeatable offers. Shop your favorite looks today!",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1920&q=80",
     title: "Exclusive 40% Off New Arrivals",
-    description:
-      "Don’t miss out on our fresh arrivals and enjoy 40% off the latest fashion must-haves!",
+    description: "Don’t miss out on our fresh arrivals and enjoy 40% off the latest fashion must-haves!",
   },
 ];
 
@@ -29,7 +24,6 @@ const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const contentRef = useRef();
 
-  // Auto slide change
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -37,34 +31,39 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Animate on slide change
   useEffect(() => {
-    gsap.fromTo(
-      contentRef.current,
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
-    );
+    if (contentRef.current) {
+      gsap.fromTo(
+        contentRef.current,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+      );
+    }
   }, [currentSlide]);
 
-  const activeSlide = slides[currentSlide] || slides[0];
+  const activeSlide = slides[currentSlide];
 
   return (
-    <section className="relative h-[80vh] overflow-hidden">
-      {slides.map((slide, i) => (
-        <div
-          key={i}
-          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${
-            i === currentSlide ? "opacity-100" : "opacity-0"
-          }`}
-          style={{ backgroundImage: `url(${slide.image})` }}
-        />
-      ))}
+    <section className="relative h-[89vh] overflow-hidden">
+      {/* Background video using imported file */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src={video} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
 
+      {/* Dark overlay for text readability */}
       <div className="absolute inset-0 bg-black/50"></div>
 
+      {/* Text content */}
       <div
         ref={contentRef}
-        className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 transition-all duration-700"
+        className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 transition-all duration-700 mt-30"
       >
         <h1 className="text-4xl md:text-6xl font-bold mb-4">{activeSlide.title}</h1>
         <p className="max-w-2xl mx-auto mb-6">{activeSlide.description}</p>

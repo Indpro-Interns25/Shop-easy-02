@@ -3,7 +3,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
-// ✅ Updated with 8 total real fashion product images
+// ✅ Product data
 const products = [
   {
     id: 1,
@@ -56,54 +56,57 @@ const products = [
 ];
 
 const ProductsGrid = () => {
-  const sectionRef = useRef();
+  const marqueeRef = useRef();
 
   useEffect(() => {
-    if (!sectionRef.current) return;
+    const ctx = gsap.context(() => {
+      const marquee = marqueeRef.current;
+      const totalWidth = marquee.scrollWidth / 2;
 
-    gsap.fromTo(
-      sectionRef.current,
-      { opacity: 0, x: -80 },
-      {
-        opacity: 1,
-        x: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-          toggleActions: "play reverse play reverse",
-        },
-      }
-    );
+      gsap.to(marquee, {
+        x: `-${totalWidth}px`, // ✅ fixed this line
+        duration: 30,
+        ease: "none",
+        repeat: -1,
+      });
+    });
+
+    return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-16 text-center bg-gray-50">
+    <section className="py-16 bg-gray-50 text-center overflow-hidden">
       <h2 className="text-3xl font-bold mb-10 text-gray-800">Our Products</h2>
-      <div className="max-w-6xl mx-auto grid sm:grid-cols-2 md:grid-cols-4 gap-8 px-6">
-        {products.map((p) => (
-          <div
-            key={p.id}
-            className="bg-white rounded-xl shadow hover:shadow-lg transition-all p-4"
-          >
-            <img
-              src={p.img}
-              alt={p.name}
-              className="rounded-lg mb-4 w-full h-52 object-cover"
-            />
-            <h4 className="font-semibold text-gray-800">{p.name}</h4>
-            <p className="text-pink-600 font-bold">${p.price}</p>
-            <div className="mt-3 flex justify-center gap-3">
-              <button className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-                Add To Cart
-              </button>
-              <button className="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700">
-                Buy Now
-              </button>
+
+      <div className="relative w-full overflow-hidden">
+        {/* ✅ Marquee Animation */}
+        <div ref={marqueeRef} className="flex gap-8 w-max">
+          {[...products, ...products].map((p, index) => (
+            <div
+              key={index}
+              className="relative group bg-white rounded-xl shadow hover:shadow-lg transition-all p-4 min-w-[250px] overflow-hidden"
+            >
+              <img
+                src={p.img}
+                alt={p.name}
+                className="rounded-lg mb-4 w-full h-52 object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+
+              <h4 className="font-semibold text-gray-800">{p.name}</h4>
+              <p className="text-pink-600 font-bold">${p.price}</p>
+
+              {/* Hover Buttons */}
+              <div className="absolute inset-0 bg-white/80 flex flex-col justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button className="px-4 py-2 bg-gray-800 text-white rounded mb-2 hover:bg-gray-700">
+                  Add To Cart
+                </button>
+                <button className="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700">
+                  Buy Now
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

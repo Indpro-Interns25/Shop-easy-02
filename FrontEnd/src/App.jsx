@@ -5,6 +5,7 @@ import Home from "./pages/Home.jsx";
 import Login from "./components/LoginPage.jsx";
 import Register from "./components/RegisterPage.jsx";
 import Footer from "./components/Footer.jsx"; // Optional if you have it
+import CustomerHome from "./pages/CustomerHome.jsx";
 import "./App.css";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/customerhome" element={<CustomerHome/>} />
         <Route path="/register" element={<Register />} />
       </Routes>
 

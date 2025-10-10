@@ -7,6 +7,7 @@ import WhyShop from "../components/WhyShop.jsx";
 import ProductsGrid from "../components/ProductsGrid.jsx";
 import Subscribe from "../components/Subscribe.jsx";
 import Testimonials from "../components/Testimonals.jsx";
+import NewArrivals from "../components/NewArrivals.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -94,10 +95,12 @@ const Home = () => {
 
   return (
     <>
+    <div>
       <Hero />
       {/* Wrap with div that doesn't restrict layout */}
-      <div ref={whyShopRef} style={wrapperStyle}>
-        <WhyShop />
+      
+      <div ref={productsRef} style={wrapperStyle}>
+        <NewArrivals />
       </div>
       <div ref={productsRef} style={wrapperStyle}>
         <ProductsGrid />
@@ -108,6 +111,13 @@ const Home = () => {
       <div ref={testimonialsRef} style={wrapperStyle}>
         <Testimonials />
       </div>
+      <div ref={whyShopRef} style={wrapperStyle}>
+        <WhyShop />
+      </div>
+
+
+    </div>
+      
     </>
   );
 };
