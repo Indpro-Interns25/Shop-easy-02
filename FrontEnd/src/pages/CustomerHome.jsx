@@ -3,10 +3,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import Hero from "../components/Hero.jsx";
-import WhyShop from "../components/WhyShop.jsx";
 import ProductsGrid from "../components/ProductsGrid.jsx";
-import Subscribe from "../components/Subscribe.jsx";
-import Testimonials from "../components/Testimonals.jsx";
+import NewArrivals from "../components/NewArrivals.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -98,8 +96,12 @@ const Home = () => {
       <Hero />
       {/* Wrap with div that doesn't restrict layout */}
       <div ref={productsRef} style={wrapperStyle}>
+        <NewArrivals />
+      </div>
+      <div ref={productsRef} style={wrapperStyle}>
         <ProductsGrid />
       </div>
+      
     </div>
       
     </>

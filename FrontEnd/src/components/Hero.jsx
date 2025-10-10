@@ -44,7 +44,7 @@ const Hero = () => {
   const activeSlide = slides[currentSlide];
 
   return (
-    <section className="relative h-[89vh] overflow-hidden">
+    <section className="relative h-[90vh] overflow-hidden">
       {/* Background video using imported file */}
       <video
         autoPlay
