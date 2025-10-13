@@ -1,23 +1,44 @@
 import React from "react";
+import { FaTruck, FaGift, FaMedal } from "react-icons/fa"; // Icons for each feature
 
 const features = [
-  { title: "Fast Delivery", desc: "Quick and reliable shipping worldwide." },
-  { title: "Free Shipping", desc: "On all orders over $50." },
-  { title: "Best Quality", desc: "Premium materials and craftsmanship." },
+  {
+    icon: <FaTruck className="text-4xl mb-4 text-white" />,
+    title: "Fast Delivery",
+    desc: "Variations of passages of Lorem Ipsum available.",
+  },
+  {
+    icon: <FaGift className="text-4xl mb-4 text-white" />,
+    title: "Free Shipping",
+    desc: "Variations of passages of Lorem Ipsum available.",
+  },
+  {
+    icon: <FaMedal className="text-4xl mb-4 text-white" />,
+    title: "Best Quality",
+    desc: "Variations of passages of Lorem Ipsum available.",
+  },
 ];
 
 const WhyShop = () => {
   return (
-    <section className="py-16 text-center bg-gray-50">
-      <h2 className="text-3xl font-bold mb-10">Why Shop With Us</h2>
-      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 px-6">
+    <section className="py-20 bg-white text-center">
+      {/* Title */}
+      <h2 className="text-4xl font-bold mb-12 text-gray-800">
+        Why <span className="text-pink-600">Shop With Us</span>
+      </h2>
+
+      {/* Features Grid */}
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-6">
         {features.map((item, i) => (
           <div
             key={i}
-            className="p-8 bg-white shadow-md rounded-xl hover:shadow-lg transition-all"
+            className="bg-[#052c3c] text-white rounded-lg py-10 px-6 shadow-lg hover:scale-105 transition-transform"
           >
-            <h4 className="text-xl font-semibold text-pink-600 mb-2">{item.title}</h4>
-            <p className="text-gray-600">{item.desc}</p>
+            <div className="flex flex-col items-center">
+              {item.icon}
+              <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
+              <p className="text-sm text-gray-300">{item.desc}</p>
+            </div>
           </div>
         ))}
       </div>

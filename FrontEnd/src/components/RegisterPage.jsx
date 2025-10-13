@@ -1,232 +1,221 @@
-import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
-const userTypes = [
-  { value: "customer", label: "Customer" },
-  { value: "seller", label: "Seller" },
-  { value: "delivery_partner", label: "Delivery Partner" },
-  { value: "city_admin", label: "City Admin" },
-];
-
-const Register = () => {
-  const [searchParams] = useSearchParams();
-  const roleFromURL = searchParams.get("role") || "customer";
-
-  const [userType, setUserType] = useState(roleFromURL);
-  const [message, setMessage] = useState(""); // ✅ response message from backend
+const RegisterPage = () => {
+  const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const [formData, setFormData] = useState({
-    username: "",
+    fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
     city: "",
     phone: "",
-    referralCode: "",
   });
 
-  // Reset some fields when userType changes
   useEffect(() => {
-  setFormData((prev) => ({
-    ...prev,
-    referralCode: "", // only reset referralCode
-  }));
-}, [userType]);
+    setTimeout(() => setShow(true), 100);
+  }, []);
 
-
-  const handleInputChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Basic validation
+
     if (formData.password !== formData.confirmPassword) {
       setMessage("❌ Passwords do not match!");
       return;
     }
 
-    if (userType === "city_admin" && formData.referralCode.trim().length === 0) {
-      setMessage("❌ Referral code is required for City Admin registration.");
-      return;
-    }
-
     try {
-      
+      setLoading(true);
+      setMessage("");
+
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          role: userType,
-          username: formData.username,
+          fullName: formData.fullName,
           email: formData.email,
           password: formData.password,
           city: formData.city,
           phone: formData.phone,
-          referralCode: formData.referralCode,
         }),
       });
-      
-      console.log(response.body);
 
       const data = await response.json();
-      console.log("test: ", data);
       console.log("Response from backend:", data);
 
       if (response.ok) {
-        setMessage(`✅ ${data.message || "Registered successfully!"}`);
+          setMessage(`✅ ${data.message || "Registered successfully!"}`);
+        setFormData({
+          fullName: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          city: "",
+          phone: "",
+        });
       } else {
         setMessage(`❌ ${data.message || "Registration failed"}`);
       }
     } catch (error) {
       console.error("Error connecting to backend:", error);
-      setMessage("❌ Error connecting to backend");
+      setMessage("❌ Unable to connect to backend");
+    } finally {
+      setLoading(false);
     }
   };
-return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center mb-6">Register as {userTypes.find(u => u.value === userType)?.label}</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Remove role selector, role fixed from URL */}
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-pink-50 to-amber-100">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={show ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="bg-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl w-full max-w-md p-8 border border-amber-100"
+      >
+        {/* Brand / Logo Section */}
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-serif tracking-widest text-gray-900">Maráh</h1>
+          <div className="w-16 mx-auto mt-2 border-b-2 border-amber-300 rounded-full"></div>
+        </div>
 
-          {/* Username */}
-          <div>
-            <label htmlFor="username" className="block font-medium mb-1">
-              Username
-            </label>
+        <h2 className="text-2xl font-light text-center text-gray-800 mb-2 tracking-wide">
+          Create Account
+        </h2>
+        <p className="text-center text-gray-500 mb-6 text-sm">
+          Join Maráh and embrace your unique style 🌸
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Full Name */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <label className="block text-sm text-gray-700 mb-1">Full Name</label>
             <input
-              id="username"
-              name="username"
               type="text"
-              value={formData.username}
-              onChange={handleInputChange}
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-300"
+              className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all duration-200"
+              placeholder="Your Name"
             />
-          </div>
+          </motion.div>
 
           {/* Email */}
-          <div>
-            <label htmlFor="email" className="block font-medium mb-1">
-              Email
-            </label>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+            <label className="block text-sm text-gray-700 mb-1">Email</label>
             <input
-              id="email"
-              name="email"
               type="email"
+              name="email"
               value={formData.email}
-              onChange={handleInputChange}
+              onChange={handleChange}
               required
-              placeholder="example@mail.com"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-300"
+              placeholder="you@example.com"
+              className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all duration-200"
             />
-          </div>
+          </motion.div>
 
           {/* Password */}
-          <div>
-            <label htmlFor="password" className="block font-medium mb-1">
-              Password
-            </label>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+            <label className="block text-sm text-gray-700 mb-1">Password</label>
             <input
-              id="password"
-              name="password"
               type="password"
+              name="password"
               value={formData.password}
-              onChange={handleInputChange}
+              onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-300"
+              placeholder="••••••••"
+              className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all duration-200"
             />
-          </div>
+          </motion.div>
 
           {/* Confirm Password */}
-          <div>
-            <label htmlFor="confirmPassword" className="block font-medium mb-1">
-              Confirm Password
-            </label>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+            <label className="block text-sm text-gray-700 mb-1">Confirm Password</label>
             <input
-              id="confirmPassword"
-              name="confirmPassword"
               type="password"
+              name="confirmPassword"
               value={formData.confirmPassword}
-              onChange={handleInputChange}
+              onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-300"
+              placeholder="••••••••"
+              className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all duration-200"
             />
-          </div>
+          </motion.div>
 
           {/* City */}
-          <div>
-            <label htmlFor="city" className="block font-medium mb-1">
-              City
-            </label>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+            <label className="block text-sm text-gray-700 mb-1">City</label>
             <input
-              id="city"
-              name="city"
               type="text"
+              name="city"
               value={formData.city}
-              onChange={handleInputChange}
+              onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-300"
+              placeholder="Your City"
+              className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all duration-200"
             />
-          </div>
+          </motion.div>
 
           {/* Phone */}
-          <div>
-            <label htmlFor="phone" className="block font-medium mb-1">
-              Phone Number
-            </label>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
+            <label className="block text-sm text-gray-700 mb-1">Phone Number</label>
             <input
-              id="phone"
-              name="phone"
               type="tel"
+              name="phone"
               value={formData.phone}
-              onChange={handleInputChange}
+              onChange={handleChange}
               required
               placeholder="+91 9876543210"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-300"
+              className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all duration-200"
             />
-          </div>
+          </motion.div>
 
-          {/* Referral Code only for city_admin */}
-          {userType === "city_admin" && (
-            <div>
-              <label htmlFor="referralCode" className="block font-medium mb-1">
-                Referral Code
-              </label>
-              <input
-                id="referralCode"
-                name="referralCode"
-                type="text"
-                value={formData.referralCode}
-                onChange={handleInputChange}
-                required
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-300"
-              />
-            </div>
-          )}
-
-          <button
+          {/* Submit Button */}
+          <motion.button
             type="submit"
-            className="w-full bg-indigo-600 text-white font-semibold py-2 rounded-md hover:bg-indigo-700 transition"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            disabled={loading}
+            className={`w-full mt-3 py-3 rounded-xl font-semibold shadow-md transition-all duration-200 ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-pink-400 to-amber-300 text-white hover:shadow-lg"
+            }`}
           >
-            Register
-          </button>
+            {loading ? "Registering..." : "Register"}
+          </motion.button>
         </form>
 
-        <p className="mt-5 text-center text-gray-600">
+        {message && (
+          <p
+            className={`text-center mt-5 font-medium ${
+              message.startsWith("✅") ? "text-green-600" : "text-red-500"
+            }`}
+          >
+            {message}
+          </p>
+        )}
+
+        <p className="text-center text-gray-600 mt-6 text-sm">
           Already have an account?{" "}
-          <a href="/login" className="text-indigo-600 hover:underline">
+          <Link to="/login" className="text-pink-500 hover:underline font-medium">
             Login
-          </a>
+          </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 };
 
-export default Register;
- 
+export default RegisterPage;
